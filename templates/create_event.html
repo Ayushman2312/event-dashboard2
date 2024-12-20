@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event - CompleteBoxEvents</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        
+        .gold-gradient {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+    </style>
+</head>
+<body class="bg-[#FFF5EE] min-h-screen font-['Poppins'] flex items-center justify-center transition-all duration-300">
+    {% if request.session.email %}
+    <div class="glass-card p-8 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__fadeIn">
+        <h1 class="font-['Playfair_Display'] text-3xl font-bold mb-6 text-center text-gray-800">Create Event</h1>
+        <form action="{% url 'create_event' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            <div class="transition-all duration-300 transform hover:scale-105">
+                <label for="event_image" class="block text-lg font-medium text-gray-800">Event Image:</label>
+                <input type="file" id="event_image" name="event_image" accept="image/*" required class="mt-1 block w-full border-2 border-[#FFD700]/20 rounded-lg shadow-sm focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20">
+            </div>
+            <div class="transition-all duration-300 transform hover:scale-105">
+                <label for="event_name" class="block text-lg font-medium text-gray-800">Event Name:</label>
+                <input type="text" id="event_name" name="event_name" maxlength="100" required class="mt-1 block w-full border-2 border-[#FFD700]/20 rounded-lg shadow-sm focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20">
+            </div>
+
+            <div class="transition-all duration-300 transform hover:scale-105">
+                <label for="event_venue" class="block text-lg font-medium text-gray-800">Event Venue:</label>
+                <input type="text" id="event_venue" name="event_venue" maxlength="100" required class="mt-1 block w-full border-2 border-[#FFD700]/20 rounded-lg shadow-sm focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20">
+            </div>
+
+            <div class="transition-all duration-300 transform hover:scale-105">
+                <label for="event_date" class="block text-lg font-medium text-gray-800">Event Date:</label>
+                <input type="date" id="event_date" name="event_date" required class="mt-1 block w-full border-2 border-[#FFD700]/20 rounded-lg shadow-sm focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20">
+            </div>
+
+            <div class="transition-all duration-300 transform hover:scale-105">
+                <label for="event_description" class="block text-lg font-medium text-gray-800">Event Description:</label>
+                <textarea id="event_description" name="event_description" required class="mt-1 block w-full border-2 border-[#FFD700]/20 rounded-lg shadow-sm focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-[#FFD700] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFA500] transition-all duration-300 transform hover:scale-105">Create Event</button>
+        </form>
+        <a href="{% url 'logout' %}" class="w-full py-3 bg-[#FFD700] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFA500] transition-all duration-300 transform hover:scale-105 text-center">Logout</a>
+    </div>
+    {% else %}
+    <div class="glass-card p-8 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__fadeIn">
+        <h1 class="font-['Playfair_Display'] text-3xl font-bold mb-6 text-center text-gray-800">Please Log In to Your Account</h1>
+        <p class="text-center text-gray-600 mb-4">Access your dashboard and manage your events efficiently.</p>
+        <div class="flex justify-center">
+            <a href="{% url 'home' %}" class="w-full py-3 bg-[#FFD700] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFA500] transition-all duration-300 transform hover:scale-105 text-center">Log In</a>
+        </div>
+    </div>
+    {% endif %}
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

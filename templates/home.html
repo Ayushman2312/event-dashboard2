@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompleteBoxEvents - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="bg-gradient-to-br from-[#FFF5EE] to-[#FFE4B5] min-h-screen font-['Poppins']">
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8 animate__animated animate__fadeInUp">
+            <div class="text-center">
+                <h2 class="font-['Playfair_Display'] text-4xl font-bold text-gray-900 tracking-tight">
+                    Welcome Back
+                </h2>
+                <div class="relative mt-2">
+                    <div class="h-1 w-24 bg-gradient-to-r from-[#FFD700] to-[#FFA500] mx-auto rounded-full"></div>
+                </div>
+                <p class="mt-4 text-gray-600">Sign in to access your dashboard</p>
+            </div>
+
+            <div class="mt-8 bg-white/95 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-2xl p-8">
+                <form class="space-y-6" method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="space-y-2">
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input id="email" name="email" type="email" required 
+                                   class="appearance-none block w-full pl-10 px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 placeholder-gray-400 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300"
+                                   placeholder="Enter your email">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input id="password" name="password" type="password" required
+                                   class="appearance-none block w-full pl-10 px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 placeholder-gray-400 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300"
+                                   placeholder="Enter your password">
+                        </div>
+                    </div>
+
+                    {% if error %}
+                    <div class="text-red-500 text-sm text-center animate__animated animate__headShake">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <button type="submit"
+                                class="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-white bg-gradient-to-r from-[#FFD700] to-[#FFA500] hover:from-[#FFA500] hover:to-[#FFD700] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFD700] transform hover:scale-105 transition-all duration-300 font-semibold">
+                            Sign in
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="text-center mt-4 text-sm text-gray-600">
+                <p>Access Levels:</p>
+                <div class="mt-2 space-y-1">
+                    <p><span class="font-semibold">Admin:</span> Full access to all features</p>
+                    <p><span class="font-semibold">Editor:</span> Can edit events and entries</p>
+                    <p><span class="font-semibold">Viewer:</span> Can view events and entries</p>
+                </div>
+            </div>
+
+            {% comment %} <div class="flex justify-between mt-4">
+                <a href="{% url 'login' %}" class="text-[#FFD700] hover:underline">Login</a>
+                <a href="{% url 'signup' %}" class="text-[#FFD700] hover:underline">Sign Up</a>
+            </div> {% endcomment %}
+        </div>
+    </div>
+
+    <div class="fixed bottom-4 right-4 text-gray-600 text-sm">
+        <p>© 2024 CompleteBoxEvents. All rights reserved.</p>
+    </div>
+</body>
+</html>

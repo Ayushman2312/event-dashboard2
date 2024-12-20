@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Entries - {{ event.event_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body class="bg-[#FFF5EE] min-h-screen font-['Poppins']">
+    {% if request.session.email %}
+    <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <!-- Header Section -->
+        <div class="mb-8 sm:mb-12">
+            <div class="flex items-center justify-between">
+                <a href="{% url 'home' %}" class="rounded-full h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center border-2 border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700] hover:text-white transition-all duration-300">
+                    <i class="fas fa-arrow-left text-sm sm:text-base"></i>
+                </a>
+                <div class="text-right">
+                    <span class="text-gray-600 text-sm sm:text-base">Total Entries: {{ entries|length }}</span>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4 sm:mt-6">
+                <h1 class="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    {{ event.event_name }}
+                </h1>
+                <div class="h-1 w-32 sm:w-48 bg-gradient-to-r from-[#FFD700] to-[#FFA500] mx-auto mt-4 rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="bg-white/95 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="relative flex-1 w-full sm:w-auto">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search by name..." 
+                           class="w-full pl-12 pr-4 py-2 sm:py-3 rounded-full border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300 text-sm sm:text-base">
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                    <select id="sortOrder" 
+                            class="px-4 sm:px-6 py-2 sm:py-3 rounded-full border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300 text-sm sm:text-base w-full sm:w-auto">
+                        <option value="name_asc">Name (A-Z)</option>
+                        <option value="name_desc">Name (Z-A)</option>
+                        <option value="date_newest">Newest First</option>
+                        <option value="date_oldest">Oldest First</option>
+                    </select>
+                    
+                    <button class="bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold shadow-lg hover:opacity-90 transition-all duration-300 text-sm sm:text-base w-full sm:w-auto">
+                        <i class="fas fa-plus mr-2"></i>Create Entry
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entries Table -->
+        <div class="bg-white/95 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-xl overflow-x-auto">
+            <table class="w-full min-w-[640px]">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Registration Details</th>
+                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Attendees</th>
+                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Transport Details</th>
+                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100" id="entriesTableBody">
+                    {% if entries %}
+                        {% for entry in entries %}
+                        <tr class="hover:bg-gray-50/50 transition-colors duration-200">
+                            <td class="px-4 sm:px-6 py-3 sm:py-4">
+                                <div class="space-y-1 sm:space-y-2">
+                                    <p class="text-gray-800 font-medium text-sm sm:text-base">Name: {{ entry.registration.name|default:"Not provided" }}</p>
+                                    <p class="text-gray-600 text-xs sm:text-sm">Email: {{ entry.registration.email|default:"Not provided" }}</p>
+                                    <p class="text-gray-600 text-xs sm:text-sm">Phone: {{ entry.registration.mobile_number }}</p>
+                                    <p class="text-gray-600 text-xs sm:text-sm">Registration Date: {{ entry.registration.created_at }}</p>
+                                    <p class="text-gray-600 text-xs sm:text-sm">Attending: <span class="{% if entry.registration.flag_attending == 'yes' %}text-green-600{% else %}text-red-600{% endif %}">{{ entry.registration.flag_attending }}</span></p>
+                                    <p class="text-gray-600 text-xs sm:text-sm">Number of People: {{ entry.registration.number_of_people|default:0 }}</p>
+                                    <p class="text-gray-600 text-xs sm:text-sm">Remarks: {{ entry.registration.remarks|default:"-" }}</p>
+                                </div>
+                            </td>
+                            <td class="px-4 sm:px-6 py-3 sm:py-4">
+                                <div class="space-y-1 sm:space-y-2">
+                                    {% for attendee in entry.attendees %}
+                                    <div class="flex items-center space-x-2 text-gray-700">
+                                        <i class="fas fa-user text-[#FFD700] text-xs sm:text-sm"></i>
+                                        <span class="text-xs sm:text-sm">{{ attendee.name }} - {{ attendee.mobile_number }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td class="px-4 sm:px-6 py-3 sm:py-4">
+                                <div class="space-y-3 sm:space-y-4">
+                                    <!-- Arrival Details -->
+                                    {% if entry.transport_details.arrival.mode_of_transport %}
+                                        <div>
+                                            <p class="text-gray-600 font-semibold text-xs sm:text-sm"><i class="fas fa-plane-arrival mr-2"></i>Arrival: {{ entry.transport_details.arrival.mode_of_transport }}</p>
+                                            {% if entry.transport_details.arrival.mode_of_transport == 'flight' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Flight Number: {{ entry.transport_details.arrival.flight_number }}</p>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Terminal: {{ entry.transport_details.arrival.terminal_name }}</p>
+                                            {% elif entry.transport_details.arrival.mode_of_transport == 'train' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Train Number: {{ entry.transport_details.arrival.train_number }}</p>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Arrival Station: {{ entry.transport_details.arrival.train_arrival_station }}</p>
+                                            {% elif entry.transport_details.arrival.mode_of_transport == 'bus' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Bus Number: {{ entry.transport_details.arrival.bus_number }}</p>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Bus Stop: {{ entry.transport_details.arrival.bus_stop }}</p>
+                                            {% elif entry.transport_details.arrival.mode_of_transport == 'self' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Mode: Self</p>
+                                            {% endif %}
+                                            <p class="text-gray-600 text-xs sm:text-sm">Arrival Date: {{ entry.transport_details.arrival.arrival_date }}</p>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Departure Details -->
+                                    {% if entry.transport_details.departure %}
+                                        <div>
+                                            <p class="text-gray-600 font-semibold text-xs sm:text-sm"><i class="fas fa-plane-departure mr-2"></i>Departure: {{ entry.transport_details.departure.mode_of_transport|default:"Not provided" }}</p>
+                                            {% if entry.transport_details.departure.mode_of_transport == 'flight' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Flight Number: {{ entry.transport_details.departure.flight_number|default:"Not provided" }}</p>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Terminal: {{ entry.transport_details.departure.terminal_name|default:"Not provided" }}</p>
+                                            {% elif entry.transport_details.departure.mode_of_transport == 'train' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Train Number: {{ entry.transport_details.departure.train_number|default:"Not provided" }}</p>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Departure Station: {{ entry.transport_details.departure.train_arrival_station|default:"Not provided" }}</p>
+                                            {% elif entry.transport_details.departure.mode_of_transport == 'bus' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Bus Number: {{ entry.transport_details.departure.bus_number|default:"Not provided" }}</p>
+                                                <p class="text-gray-600 text-xs sm:text-sm">Bus Stop: {{ entry.transport_details.departure.bus_stop|default:"Not provided" }}</p>
+                                            {% elif entry.transport_details.departure.mode_of_transport == 'self' %}
+                                                <p class="text-gray-600 text-xs sm:text-sm">Mode: Self</p>
+                                            {% endif %}
+                                            <p class="text-gray-600 text-xs sm:text-sm">Departure Date: {{ entry.transport_details.departure.departure_date|default:"Not provided" }}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-4 sm:px-6 py-3 sm:py-4">
+                                <div class="flex flex-col space-y-2">
+                                    <a href="{% url 'edit_entry' event.event_name entry.registration.id %}" 
+                                       class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors duration-300">
+                                        <i class="fas fa-edit mr-2"></i>Edit
+                                    </a>
+                                    {% comment %} <a href="{% url 'delete_entry' event.event_name entry.registration.id %}" 
+                                       class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors duration-300"
+                                       onclick="return confirm('Are you sure you want to delete this entry?')">
+                                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                                    </a> {% endcomment %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-4 sm:px-6 py-6 sm:py-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-2xl sm:text-4xl mb-3 sm:mb-4"></i>
+                            <p class="text-sm sm:text-base">No entries found</p>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-card p-8 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__fadeIn">
+        <h1 class="font-['Playfair_Display'] text-3xl font-bold mb-6 text-center text-gray-800">Please Log In to Your Account</h1>
+        <p class="text-center text-gray-600 mb-4">Access your dashboard and manage your events efficiently.</p>
+        <div class="flex justify-center">
+            <a href="{% url 'home' %}" class="w-full py-3 bg-[#FFD700] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFA500] transition-all duration-300 transform hover:scale-105 text-center">Log In</a>
+        </div>
+    </div>
+    {% endif %}
+    <script src="{% static 'js/event_entries.js' %}?v=1"></script>
+</body>
+</html>

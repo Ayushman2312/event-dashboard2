@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Registration - CompleteBoxEvents</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script>
+        // JavaScript to dynamically handle the number of attendees
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberOfPeopleInput = document.getElementById('numberOfPeople');
+            const attendeeContainer = document.getElementById('attendeeContainer');
+
+            numberOfPeopleInput.addEventListener('change', function() {
+                const numberOfPeople = parseInt(this.value) || 0;
+                attendeeContainer.innerHTML = ''; // Clear existing attendees
+
+                for (let i = 1; i <= numberOfPeople; i++) {
+                    const attendeeDiv = document.createElement('div');
+                    attendeeDiv.className = 'space-y-4 p-4 bg-[#FFF5EE] rounded-xl mb-4';
+                    attendeeDiv.innerHTML = `
+                        <h4 class="font-medium text-gray-800">Attendee ${i}</h4>
+                        <input type="hidden" name="attendee_id_${i}" value="">
+                        <div class="space-y-4">
+                            <label class="block text-gray-800">Name</label>
+                            <input type="text" name="attendee_name_${i}" class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300" required>
+                        </div>
+                        <div class="space-y-4">
+                            <label class="block text-gray-800">Mobile Number</label>
+                            <input type="text" name="attendee_mobile_${i}" class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300" required>
+                        </div>
+                        <div class="space-y-4">
+                            <label class="block text-gray-800">ID Proof Type</label>
+                            <select name="attendee_id_type_${i}" class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300" required>
+                                <option value="aadhar">Aadhar Card</option>
+                                <option value="passport">Passport</option>
+                                <option value="license">Driving License</option>
+                            </select>
+                        </div>
+                    `;
+                    attendeeContainer.appendChild(attendeeDiv);
+                }
+            });
+        });
+    </script>
+</head>
+<body class="bg-[#FFF5EE] min-h-screen font-['Poppins']">
+    {% if request.session.email %}
+    <div class="relative bg-gradient-to-r from-[#FFDAB9] to-[#FFE4B5] py-16 transition-all duration-500 overflow-hidden animate__animated animate__fadeIn">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAwIDBoMTAwdjEwMEgxMDB6IiBmaWxsPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMSkiLz48L3N2Zz4=')] opacity-10"></div>
+        
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex items-center mb-8 animate__animated animate__slideInLeft">
+                <a href="{% url 'view_entries' event.event_name %}" class="rounded-full h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center border-2 border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700] hover:text-white transition-all duration-300 hover:animate__animated hover:animate__pulse">
+                    <i class="fas fa-arrow-left text-sm sm:text-base"></i>
+                </a>
+            </div>
+
+            <h1 class="font-['Playfair_Display'] text-4xl md:text-6xl font-bold text-center text-gray-800 tracking-tight animate__animated animate__fadeInDown">
+                Edit Registration
+                <div class="relative">
+                    <div class="h-1 w-24 md:w-48 bg-gradient-to-r from-[#FFD700] to-[#FFA500] mx-auto mt-6 rounded-full animate__animated animate__zoomIn animate__delay-1s"></div>
+                </div>
+            </h1>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 md:px-6 py-12 animate__animated animate__fadeInUp">
+        <div class="max-w-2xl mx-auto bg-white/95 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-2xl overflow-hidden">
+            <form method="post" class="p-6 md:p-8 space-y-6">
+                {% csrf_token %}
+                
+                <div class="space-y-4">
+                    <label for="name" class="block text-gray-800 font-medium">Full Name</label>
+                    <input type="text" id="name" name="name" value="{{ registration.name }}" required
+                           class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <label for="countryCode" class="block text-gray-800 font-medium">Country Code</label>
+                        <input type="text" id="countryCode" name="countryCode" value="{{ registration.country_code }}" required
+                               class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                    </div>
+                    <div class="space-y-4">
+                        <label for="mobileNumber" class="block text-gray-800 font-medium">Mobile Number</label>
+                        <input type="text" id="mobileNumber" name="mobileNumber" value="{{ registration.mobile_number }}" required
+                               class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <label for="email" class="block text-gray-800 font-medium">Email</label>
+                    <input type="email" id="email" name="email" value="{{ registration.email }}" required
+                           class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                </div>
+
+                <div class="space-y-4">
+                    <label class="block text-gray-800 font-medium">Will you attend?</label>
+                    <select name="flagAttending" id="flagAttending" class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                        <option value="yes" {% if registration.flag_attending == 'yes' %}selected{% endif %}>Yes, I will attend the event</option>
+                        <option value="no" {% if registration.flag_attending == 'no' %}selected{% endif %}>Sorry, I can't attend the event</option>
+                    </select>
+                </div>
+
+                <div class="space-y-4">
+                    <label for="numberOfPeople" class="block text-gray-800 font-medium">Number of People</label>
+                    <input type="number" id="numberOfPeople" name="numberOfPeople" value="{{ registration.number_of_people }}" min="0"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                </div>
+
+                <!-- Attendee Details Section -->
+                <div id="attendeeSection" class="space-y-6 border-t border-[#FFD700]/20 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-800">Attendee Details</h3>
+                    <div id="attendeeContainer">
+                        {% for attendee in attendees %}
+                        <div class="space-y-4 p-4 bg-[#FFF5EE] rounded-xl mb-4">
+                            <h4 class="font-medium text-gray-800">Attendee {{ forloop.counter }}</h4>
+                            <input type="hidden" name="attendee_id_{{ forloop.counter }}" value="{{ attendee.id }}">
+                            <div class="space-y-4">
+                                <label class="block text-gray-800">Name</label>
+                                <input type="text" name="attendee_name_{{ forloop.counter }}" value="{{ attendee.name }}"
+                                       class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300" required>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-gray-800">Mobile Number</label>
+                                <input type="text" name="attendee_mobile_{{ forloop.counter }}" value="{{ attendee.mobile_number }}"
+                                       class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300" required>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-gray-800">ID Proof Type</label>
+                                <select name="attendee_id_type_{{ forloop.counter }}" class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300" required>
+                                    <option value="aadhar" {% if attendee.identification_proof == 'aadhar' %}selected{% endif %}>Aadhar Card</option>
+                                    <option value="passport" {% if attendee.identification_proof == 'passport' %}selected{% endif %}>Passport</option>
+                                    <option value="license" {% if attendee.identification_proof == 'license' %}selected{% endif %}>Driving License</option>
+                                </select>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <label for="remarks" class="block text-gray-800 font-medium">Remarks</label>
+                    <textarea id="remarks" name="remarks" rows="4"
+                              class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">{{ registration.remarks }}</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <label for="arrivalTransport" class="block text-gray-800 font-medium">Arrival Transport</label>
+                        <select id="arrivalTransport" name="arrivalTransport" 
+                                class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                            <option value="">Select Transport</option>
+                            <option value="flight" {% if transport_details.arrival.mode_of_transport == 'flight' %}selected{% endif %}>Flight</option>
+                            <option value="train" {% if transport_details.arrival.mode_of_transport == 'train' %}selected{% endif %}>Train</option>
+                            <option value="bus" {% if transport_details.arrival.mode_of_transport == 'bus' %}selected{% endif %}>Bus</option>
+                            <option value="self" {% if transport_details.arrival.mode_of_transport == 'self' %}selected{% endif %}>Self</option>
+                        </select>
+                    </div>
+                    <div class="space-y-4">
+                        <label for="departureTransport" class="block text-gray-800 font-medium">Departure Transport</label>
+                        <select id="departureTransport" name="departureTransport"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-[#FFD700]/20 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/20 transition-all duration-300">
+                            <option value="">Select Transport</option>
+                            <option value="flight" {% if transport_details.departure.mode_of_transport == 'flight' %}selected{% endif %}>Flight</option>
+                            <option value="train" {% if transport_details.departure.mode_of_transport == 'train' %}selected{% endif %}>Train</option>
+                            <option value="bus" {% if transport_details.departure.mode_of_transport == 'bus' %}selected{% endif %}>Bus</option>
+                            <option value="self" {% if transport_details.departure.mode_of_transport == 'self' %}selected{% endif %}>Self</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-white px-6 py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 hover:shadow-xl transition-all duration-300">
+                    Update Registration
+                </button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-card p-8 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__fadeIn">
+        <h1 class="font-['Playfair_Display'] text-3xl font-bold mb-6 text-center text-gray-800">Please Log In to Your Account</h1>
+        <p class="text-center text-gray-600 mb-4">Access your dashboard and manage your events efficiently.</p>
+        <div class="flex justify-center">
+            <a href="{% url 'home' %}" class="w-full py-3 bg-[#FFD700] text-white font-semibold rounded-lg shadow-md hover:bg-[#FFA500] transition-all duration-300 transform hover:scale-105 text-center">Log In</a>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
